@@ -1228,6 +1228,69 @@ body { letter-spacing: .01em; }
 }
 </style>
 
+
+<style id="ytlight-lite">
+/* Lightweight: no blur, no shimmer, no hover motion, no heavy shadows; off-screen cards skip rendering */
+.topbar, :root[data-theme="dark"] .topbar { backdrop-filter: none !important; background: var(--bg) !important; }
+*, *::before, *::after { transition: none !important; }
+.skeleton .thumb, .skeleton .line, .skeleton .avatar { animation: none !important; background: var(--surface-2) !important; }
+.video-card:hover { transform: none; box-shadow: none; }
+.video-card:not(.skeleton) { content-visibility: auto; contain-intrinsic-size: auto 300px; }
+.side-list .video-card { content-visibility: visible; }
+.player-wrap { box-shadow: none; border: 2px solid var(--accent); }
+.search-history-panel { box-shadow: none; }
+.toast { box-shadow: none; }
+@media (prefers-reduced-motion: no-preference) { .loading-spinner { animation-duration: 1s; } }
+</style>
+
+<style id="ytlight-simple">
+/* Simple: borderless cards, thin lines, quiet buttons, no decoration */
+:root { --bg: #fff; --surface: #fff; --surface-2: #f3f3f3; --surface-3: #e8e8e8; --line: #e6e6e6; --text: #151515; --muted: #707070; }
+:root[data-theme="dark"] { --bg: #111; --surface: #111; --surface-2: #1d1d1d; --surface-3: #2a2a2a; --line: #2a2a2a; --text: #eee; --muted: #999; }
+.topbar, :root[data-theme="dark"] .topbar { border-bottom: 1px solid var(--line); }
+.search-input { border: 1px solid var(--line); border-right: 0; background: var(--surface-2); }
+.search-input:focus { border-color: var(--text); }
+.search-button { background: var(--surface-2); border: 1px solid var(--line); color: var(--text); }
+.search-button:hover { background: var(--surface-3); border-color: var(--line); color: var(--text); }
+.search-history-panel { border: 1px solid var(--line); }
+.round-button:hover, .menu-button:hover { background: var(--surface-2); box-shadow: none; }
+
+.chip-row { border-bottom: 0; gap: 8px; margin-bottom: 20px; }
+.chip { height: 32px; padding: 0 14px; background: var(--surface-2); border: 0; font-weight: 400; color: var(--text); }
+.chip:hover { background: var(--surface-3); color: var(--text); }
+.chip.active { background: var(--text); color: var(--bg); }
+.page-title h1 { font-size: 20px; font-weight: 700; }
+.page-title h1::before { display: none; }
+
+.video-grid { gap: 28px 16px; }
+.video-card, .video-card:hover { background: transparent; border: 0; box-shadow: none; transform: none; }
+.video-card .thumb { border: 0; }
+.video-card .card-body { padding: 10px 0 0; }
+.card-title { font-weight: 700; font-size: 14px; }
+.card-meta { font-size: 12px; }
+.card-meta span:not(:last-child)::after { content: "・"; opacity: 1; }
+.duration { right: 6px; bottom: 6px; padding: 2px 5px; background: rgba(0,0,0,.8); }
+
+.player-wrap { border: 0; }
+.watch-title { font-size: 20px; font-weight: 700; margin: 16px 0 10px; }
+.watch-meta { border-bottom: 1px solid var(--line); }
+.pill-button { border: 0; background: var(--surface-2); }
+.pill-button:hover { background: var(--surface-3); color: var(--text); }
+.quality-select, .settings-select, .channel-sort-select { border-color: var(--line); }
+.description { border: 0; background: var(--surface-2); }
+.comments-section { border-top: 1px solid var(--line); }
+.side-title { border: 0; padding: 0; font-size: 15px; letter-spacing: 0; text-transform: none; }
+.side-list .thumb { border: 0; }
+.side-list .video-card:hover .card-title { text-decoration: none; color: inherit; }
+
+.load-more-button { border: 1px solid var(--line); background: var(--surface-2); font-weight: 400; }
+.load-more-button:hover { background: var(--surface-3); color: var(--text); }
+.empty { border: 0; background: transparent; }
+#settingsBackdrop .settings-panel { border-left: 1px solid var(--line); }
+.settings-header h2 { font-weight: 700; }
+.settings-button { border: 0; background: var(--surface-2); }
+.toast { border-left: 0; }
+</style>
 </head>
 <body>
   <svg width="0" height="0" class="sr-only" aria-hidden="true">
@@ -2519,7 +2582,7 @@ body { letter-spacing: .01em; }
       return `
         <article class="video-card" data-video-id="${escapeHtml(item.videoId)}" tabindex="0" role="button" aria-label="${escapeHtml(item.title)}">
           <div class="thumb">
-            <img src="${escapeHtml(thumbnail(item))}" loading="lazy" alt="" onerror="handleThumbnailError(this)">
+            <img src="${escapeHtml(thumbnail(item))}" loading="lazy" decoding="async" alt="" onerror="handleThumbnailError(this)">
             ${item.lengthSeconds ? `<span class="duration">${formatDuration(item.lengthSeconds)}</span>` : ""}
           </div>
           <div class="card-body">
@@ -3770,7 +3833,7 @@ body { letter-spacing: .01em; }
           <p class="playlist-side-label">${list.items.length.toLocaleString("ja-JP")}本の動画</p>
           ${list.items.map((item, index) => `
             <button class="playlist-side-row ${item.videoId === state.currentVideo?.videoId ? "active" : ""}" type="button" data-playlist-video="${escapeHtml(item.videoId)}" aria-label="${escapeHtml(item.title)}">
-              <div class="thumb"><img src="${escapeHtml(thumbnail(item))}" loading="lazy" alt=""></div>
+              <div class="thumb"><img src="${escapeHtml(thumbnail(item))}" loading="lazy" decoding="async" alt=""></div>
               <div><h3>${index + 1}. ${escapeHtml(item.title)}</h3><p>${escapeHtml(item.author)}</p></div>
             </button>`).join("")}`;
         sideList.querySelectorAll("[data-playlist-video]").forEach((button) => {
@@ -4511,4 +4574,4 @@ body { letter-spacing: .01em; }
     routeFromHash();
   </script>
 </body>
-</html
+</html>
